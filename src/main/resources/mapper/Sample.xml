@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weixin.boot.sample.dao.SampleDao">
+
+    <resultMap id="sampleResultMap" type="com.weixin.boot.sample.domain.Sample">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="nation" property="nation"/>
+        <result column="birthday" property="birthday"/>
+        <result column="height" property="height"/>
+        <result column="phone" property="phone"/>
+        <result column="photo" property="photoPath"/>
+        <result column="email" property="email"/>
+        <result column="hobbies" property="hobbies"/>
+        <result column="sex" property="sex"/>
+        <result column="self_intro" property="selfIntro"/>
+    </resultMap>
+
+    <sql id="sampleColumns">
+        id,name,nation,birthday,height,phone,email,hobbies,sex,photo,self_intro
+    </sql>
+
+    <select id="page" resultMap="sampleResultMap">
+        select <include refid="sampleColumns"/> from sample
+        <where>
+            <if test="name!=null and name!=''">
+                <bind name="nameLike" value="name+'%'"/>
+                name like #{nameLike}
+            </if>
+        </where>
+    </select>
+
+    <select id="get" resultMap="sampleResultMap">
+        select <include refid="sampleColumns"/>  from sample
+        where id=#{id}
+    </select>
+
+    <insert id="insert">
+        insert into sample(name,nation,birthday,height,email,hobbies,sex,phone,photo,self_intro) values
+               (#{name},#{nation},#{birthday},#{height},#{email},#{hobbies},#{sex},#{phone},#{photoPath},#{selfIntro})
+    </insert>
+
+    <update id="update">
+        update sample set name=#{name},nation=#{nation} where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from sample where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
